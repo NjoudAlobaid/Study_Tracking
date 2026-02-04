@@ -3,407 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أكاديمية الأبطال | دحوم وريمي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@400;800&display=swap" rel="stylesheet">
+    <title>أكاديمية الأبطال الذكية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --dahoum-main: #0077b6;
-            --dahoum-grad: linear-gradient(135deg, #0077b6, #00b4d8);
-            --remy-main: #6a1b9a;
-            --remy-grad: linear-gradient(135deg, #6a1b9a, #9c27b0);
-            --bg: #f8fafc;
-            --white: #ffffff;
-            --gold: #FFD700;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); transition: 0.3s; overflow-x: hidden; }
-
-        body.dahoum-theme { --active: var(--dahoum-main); --active-grad: var(--dahoum-grad); }
-        body.remy-theme { --active: var(--remy-main); --active-grad: var(--remy-grad); }
-
-        /* Navigation */
-        .app-bar {
-            background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-bottom: 4px solid var(--active);
-        }
-
-        .btn { padding: 10px 25px; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; transition: 0.3s; color: white; }
-        .btn-dahoum { background: var(--dahoum-grad); }
-        .btn-remy { background: var(--remy-grad); }
-        .btn-admin { background: #455a64; font-size: 0.8rem; }
-
-        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
-
-        /* Hero Section */
-        .hero-card {
-            background: var(--active-grad); color: white; border-radius: 35px; padding: 40px; text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); margin-bottom: 30px; position: relative; overflow: hidden;
-        }
-
-        .profile-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 20px; }
-        .profile-img { width: 100%; height: 100%; border-radius: 50%; border: 5px solid white; object-fit: cover; }
-        .upload-btn { position: absolute; bottom: 0; right: 0; background: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--active); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-
-        .stats-row { display: flex; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
-        .stat-item { background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 10px 25px; border-radius: 20px; min-width: 120px; }
-        .stat-val { font-size: 1.8rem; font-weight: 900; display: block; }
-
-        /* Math Quiz Section */
-        .quiz-container { background: white; border-radius: 30px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px; text-align: center; border: 2px solid var(--active); }
-        .math-text { font-family: 'Tajawal', sans-serif; font-size: 4rem; font-weight: 800; color: var(--active); margin: 20px 0; }
-        .math-input { font-size: 2.5rem; width: 160px; text-align: center; border: 3px solid #eee; border-radius: 20px; padding: 10px; font-family: 'Cairo'; transition: 0.3s; }
-        .math-input:focus { border-color: var(--active); outline: none; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
-        .feedback-box { margin-top: 20px; font-weight: bold; font-size: 1.3rem; min-height: 40px; border-radius: 15px; padding: 10px; }
-        .correct { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
-        .wrong { background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
-
-        /* Cards and Tables */
-        .section-header { font-size: 1.8rem; color: var(--active); margin: 40px 0 20px; display: flex; align-items: center; gap: 10px; }
-        .section-header::after { content: ''; flex: 1; height: 3px; background: #eee; border-radius: 5px; }
-
-        .zoom-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .zoom-card { background: white; padding: 25px; border-radius: 25px; border-right: 8px solid #2d8cff; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
-        .zoom-btn { display: block; background: #2d8cff; color: white; text-decoration: none; text-align: center; padding: 12px; border-radius: 15px; margin-top: 15px; font-weight: bold; transition: 0.3s; }
-        .zoom-btn:hover { transform: scale(1.03); filter: brightness(1.1); }
-
-        .table-wrap { background: white; border-radius: 25px; overflow-x: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; }
-        th, td { padding: 15px; text-align: center; border: 1px solid #f1f1f1; }
-        th { background: var(--active); color: white; font-weight: 800; }
-        .day-cell { background: #f8fafc; font-weight: 900; color: var(--active); width: 110px; }
-
-        /* Journal */
-        .week-picker { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .week-btn { padding: 8px 20px; border-radius: 20px; border: 2px solid var(--active); background: transparent; color: var(--active); cursor: pointer; font-weight: bold; }
-        .week-btn.active { background: var(--active); color: white; }
-
-        .journal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
-        .day-card { background: white; padding: 25px; border-radius: 25px; border-top: 8px solid var(--active); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
-        textarea { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #eee; font-family: 'Cairo'; margin-top: 8px; resize: none; background: #fcfcfc; }
-        .happy-box textarea { border-right: 5px solid #4caf50; }
-        .sad-box textarea { border-right: 5px solid #f44336; }
-
-        /* Admin Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); z-index: 2000; align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 90%; max-width: 500px; padding: 35px; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
-        .modal-input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid #ddd; font-family: 'Cairo'; }
-
+        :root { --dahoum: #0077b6; --remy: #7b2cbf; --active: #0077b6; }
+        body { font-family: 'Cairo', sans-serif; background: #f0f2f5; margin: 0; padding-bottom: 80px; transition: 0.5s; }
+        .app-bar { background: white; padding: 15px; display: flex; justify-content: space-around; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .btn-u { padding: 10px 25px; border: 2px solid #eee; border-radius: 50px; cursor: pointer; font-weight: bold; }
+        body.dahoum-theme .btn-d { background: var(--dahoum); color: white; }
+        body.remy-theme .btn-r { background: var(--remy); color: white; }
+        .container { max-width: 800px; margin: auto; padding: 20px; }
+        .card { background: white; border-radius: 25px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .p-img { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--active); object-fit: cover; }
+        .sync-status { position: fixed; bottom: 85px; left: 15px; font-size: 0.7rem; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 10px; z-index: 1000; }
         .hidden { display: none; }
-        @media (max-width: 768px) { .hero-card { padding: 25px; } .math-text { font-size: 2.5rem; } }
+        textarea { width: 100%; height: 150px; border-radius: 15px; padding: 15px; border: 1px solid #eee; font-family: 'Cairo'; }
+        /* استايل الأزرار السفلية */
+        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px; border-top: 1px solid #eee; }
+        .nav-item { border: none; background: none; font-family: 'Cairo'; cursor: pointer; color: #888; }
+        .nav-item.active { color: var(--active); font-weight: bold; }
     </style>
 </head>
-<body class="dahoum-theme" id="appBody">
+<body class="dahoum-theme" id="bodyRoot">
+
+    <div id="syncIndicator" class="sync-status">جاري التحقق من السحاب... ☁️</div>
 
     <div class="app-bar">
-        <div style="font-weight: 900; font-size: 1.4rem; color: var(--active);">🌟 منصة الأبطال</div>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn btn-dahoum" onclick="switchUser('dahoum')">دحوم 👦</button>
-            <button class="btn btn-remy" onclick="switchUser('remy')">ريمي 👧</button>
-            <button class="btn btn-admin" onclick="openAdmin()">⚙️</button>
-        </div>
+        <button class="btn-u btn-d" onclick="switchUser('dahoum')">دحوم 👦</button>
+        <button class="btn-u btn-r" onclick="switchUser('remy')">ريمي 👧</button>
     </div>
 
     <div class="container">
-        <!-- Profile & Stats -->
-        <div class="hero-card">
-            <div class="profile-wrap">
-                <img id="uImg" class="profile-img" src="https://via.placeholder.com/150">
-                <label class="upload-btn" onclick="document.getElementById('fileInp').click()">📷</label>
-                <input type="file" id="fileInp" class="hidden" onchange="uploadImg(event)">
+        <div class="card" style="text-align:center;">
+            <div style="position:relative; display:inline-block;">
+                <img id="userImg" class="p-img" src="https://via.placeholder.com/150">
+                <input type="file" id="imgFile" class="hidden" onchange="uploadImg(event)">
+                <button onclick="document.getElementById('imgFile').click()" style="position:absolute; bottom:0; right:0; border-radius:50%; border:none; padding:8px; cursor:pointer; background:white; box-shadow:0 2px 5px rgba(0,0,0,0.2);">📷</button>
             </div>
-            <h1 id="uWelcome">أهلاً بالبطل دحوم!</h1>
-            <div class="stats-row">
-                <div class="stat-item"><span class="stat-val" id="uStars">0</span>النجوم ⭐</div>
-                <div class="stat-item"><span class="stat-val" id="uPts">0</span>النقاط 🎯</div>
-                <div class="stat-item"><span class="stat-val" id="uLvl">1</span>المستوى 🏆</div>
-            </div>
+            <h2 id="welcomeName" style="margin:10px 0;">بطلنا دحوم</h2>
+            <div style="font-size:1.5rem; font-weight:900; color:#f1c40f;">⭐ <span id="starPts">0</span></div>
         </div>
 
-        <!-- Math Challenge -->
-        <div class="quiz-container">
-            <h3 style="color:var(--active)">🧮 تحدي الرياضيات اليومي (5 أسئلة)</h3>
-            <div id="quizBox">
-                <div class="math-text" id="qDisplay">-- × --</div>
-                <input type="number" id="qInput" class="math-input" placeholder="؟" onkeypress="if(event.key==='Enter') checkMath()">
-                <br><br>
-                <button class="btn" style="background:var(--active); padding: 15px 50px; font-size: 1.2rem;" onclick="checkMath()">تحقق ✅</button>
-                <div id="feedback" class="feedback-box hidden"></div>
-                <p style="margin-top: 15px; color: #666;">سؤال رقم <span id="qIdx">1</span> من 5</p>
-            </div>
-            <div id="quizResult" class="hidden">
-                <h2 style="font-size: 2rem;">كفو يا بطل! حصلت على <span id="earnedPts">0</span> نقطة 🎉</h2>
-                <button class="btn" style="background:#444; margin-top:15px;" onclick="startQuiz()">تحدي جديد 🔄</button>
+        <!-- الأقسام -->
+        <div id="sec-home">
+            <div class="card">
+                <h3>📅 مفكرة اليوم</h3>
+                <textarea id="diaryInput" oninput="saveAndSync()" placeholder="اكتب إنجازاتك اليوم..."></textarea>
             </div>
         </div>
 
-        <!-- Zoom Classes -->
-        <div class="section-header">📺 حصص الزووم المباشرة</div>
-        <div class="zoom-grid" id="zoomArea"></div>
-
-        <!-- School Table -->
-        <div class="section-header">🏫 الجدول الدراسي الصباحي</div>
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr><th>اليوم</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr>
-                </thead>
-                <tbody id="schoolBody"></tbody>
-            </table>
+        <div id="sec-admin" class="hidden">
+            <div class="card">
+                <h3>⚙️ إعدادات المزامنة السحابية</h3>
+                <p style="font-size:0.8rem; color:#666;">أدخل البيانات مرة واحدة فقط وسيتم الحفظ تلقائياً.</p>
+                <input type="password" id="adminPass" placeholder="الرقم السري (123456)" style="width:100%; padding:10px; margin-bottom:10px;">
+                <input type="text" id="ghToken" placeholder="GitHub Token (ghp_...)" style="width:100%; padding:10px; margin-bottom:10px;">
+                <input type="text" id="ghRepo" placeholder="اسم المستخدم/المستودع" style="width:100%; padding:10px; margin-bottom:10px;">
+                <button onclick="saveAdmin()" style="width:100%; padding:15px; background:var(--active); color:white; border:none; border-radius:10px; font-weight:bold;">حفظ البيانات وتفعيل السحاب ✅</button>
+            </div>
         </div>
-
-        <!-- Journal -->
-        <div class="section-header">📓 مفكرة الإنجاز والمشاعر</div>
-        <div class="week-picker">
-            <button class="week-btn active" onclick="changeWeek(1)">الأسبوع 1</button>
-            <button class="week-btn" onclick="changeWeek(2)">الأسبوع 2</button>
-            <button class="week-btn" onclick="changeWeek(3)">الأسبوع 3</button>
-            <button class="week-btn" onclick="changeWeek(4)">الأسبوع 4</button>
-        </div>
-        <div class="journal-grid" id="journalArea"></div>
     </div>
 
-    <!-- Admin Modal -->
-    <div id="adminModal" class="modal">
-        <div class="modal-content">
-            <h3 style="text-align:center; color: var(--active);">لوحة تحكم الأب 🔐</h3>
-            <div style="margin: 20px 0;">
-                <p>إضافة نجوم مكافأة:</p>
-                <div style="display:flex; gap:10px; margin-top:10px;">
-                    <button class="btn btn-dahoum" style="flex:1" onclick="addBonus('dahoum')">دحوم +1 ⭐</button>
-                    <button class="btn btn-remy" style="flex:1" onclick="addBonus('remy')">ريمي +1 ⭐</button>
-                </div>
-            </div>
-            <hr>
-            <div style="margin-top:20px;">
-                <p>إعدادات المزامنة (GitHub):</p>
-                <input type="password" id="adminPass" class="modal-input" placeholder="الرقم السري (123456)">
-                <input type="text" id="ghToken" class="modal-input" placeholder="GitHub Token">
-                <input type="text" id="ghRepo" class="modal-input" placeholder="username/repo">
-                <button class="btn" style="background:#27ae60; width:100%; margin-top:10px;" onclick="syncNow()">حفظ ومزامنة السحاب ☁️</button>
-            </div>
-            <button class="btn" style="background:#eee; color:#333; width:100%; margin-top:10px;" onclick="closeAdmin()">إغلاق</button>
-        </div>
+    <div class="nav-bottom">
+        <button class="nav-item active" onclick="showSec('home', this)">🏠 الجدول</button>
+        <button class="nav-item" onclick="showSec('admin', this)">⚙️ الإدارة</button>
     </div>
 
 <script>
-    const DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
     const CONFIG = {
-        dahoum: {
-            color: '#0077b6', welcome: "أهلاً بالبطل دحوم! 🚀", theme: "dahoum-theme",
-            zoom: [
-                { t: "قرآن (أ. هاجر)", d: "أحد، اثنين، أربعاء", h: "2:30 ظ", l: "https://us05web.zoom.us/j/5552102339?pwd=7fPtK8N4zIBbY8fvreFOdeqxmP4AJL.1" },
-                { t: "إنجليزي (أ. منار)", d: "أحد، ثلاثاء", h: "6:00 م", l: "https://us05web.zoom.us/j/89914760138?pwd=GH8Uoy2ew11eBgj3YUYLTSjzUCwb9j.1" }
-            ],
-            school: [
-                ["قرآن", "بدنية", "حياتية", "رياضيات", "علوم", "فنية", "عربي"],
-                ["علوم", "بدنية", "قرآن", "عربي", "إنجليزي", "رياضيات", "عربي"],
-                ["علوم", "بدنية", "قرآن", "عربي", "رياضيات", "نشاط", "-"],
-                ["قرآن", "إنجليزي", "رياضيات", "عربي", "علوم", "رياضيات", "-"],
-                ["رياضيات", "إنجليزي", "عربي", "قرآن", "فنية", "نشاط", "-"]
-            ]
-        },
-        remy: {
-            color: '#6a1b9a', welcome: "أهلاً بالمبدعة ريمي! ✨", theme: "remy-theme",
-            zoom: [
-                { t: "قرآن (أ. منه)", d: "أحد، ثلاثاء، أربعاء", h: "2:00 ظ", l: "https://us05web.zoom.us/j/4365062686?pwd=gzEitR0Y0KKyh5xukgAZwrqNXdibWx.1" },
-                { t: "إنجليزي (أ. منار)", d: "أحد، ثلاثاء", h: "6:00 م", l: "https://us05web.zoom.us/j/89914760138?pwd=GH8Uoy2ew11eBgj3YUYLTSjzUCwb9j.1" }
-            ],
-            school: [
-                ["إسلامية", "لغتي", "رياضيات", "إنجليزي", "لغتي", "بدنية", "نشاط 3"],
-                ["رياضيات", "لغتي", "حياتية", "نشاط 3", "بدنية", "إسلامية", "علوم"],
-                ["إنجليزي", "لغتي", "إسلامية", "نشاط 3", "رياضيات", "فنية", "فنية"],
-                ["رياضيات", "علوم", "رياضيات", "علوم", "إسلامية", "لغتي", "-"],
-                ["لغتي", "رياضيات", "إسلامية", "إنجليزي", "بدنية", "علوم", "-"]
-            ]
-        }
+        dahoum: { color: '#0077b6', name: 'دحوم' },
+        remy: { color: '#7b2cbf', name: 'ريمي' }
     };
 
-    let currentUser = 'dahoum', currentWeek = 1, qIdx = 1, currentAns = 0, currentScore = 0;
+    let currentUser = 'dahoum';
+    let syncTimeout;
 
-    function switchUser(u) {
-        currentUser = u;
-        document.getElementById('appBody').className = CONFIG[u].theme;
-        document.getElementById('uWelcome').innerText = CONFIG[u].welcome;
-        document.getElementById('uStars').innerText = localStorage.getItem(u + '_stars') || 0;
-        document.getElementById('uPts').innerText = localStorage.getItem(u + '_pts') || 0;
-        document.getElementById('uLvl').innerText = Math.floor((localStorage.getItem(u + '_pts') || 0)/100) + 1;
-        document.getElementById('uImg').src = localStorage.getItem(u + '_img') || 'https://via.placeholder.com/150';
-
-        renderZoom();
-        renderSchool();
-        renderJournal();
-        startQuiz();
-    }
-
-    function renderZoom() {
-        document.getElementById('zoomArea').innerHTML = CONFIG[currentUser].zoom.map(z => `
-            <div class="zoom-card">
-                <strong>${z.t}</strong><br><small>📅 الأيام: ${z.d}</small><br><small>⏰ الوقت: ${z.h}</small>
-                <a href="${z.l}" target="_blank" class="zoom-btn">دخول الحصة 🖥️</a>
-            </div>
-        `).join('');
-    }
-
-    function renderSchool() {
-        document.getElementById('schoolBody').innerHTML = DAYS.map((d, i) => `
-            <tr><td class="day-cell">${d}</td>${CONFIG[currentUser].school[i].map(c => `<td>${c}</td>`).join('')}</tr>
-        `).join('');
-    }
-
-    function changeWeek(w) {
-        currentWeek = w;
-        document.querySelectorAll('.week-btn').forEach((b, i) => b.classList.toggle('active', i+1 === w));
-        renderJournal();
-    }
-
-    function renderJournal() {
-        document.getElementById('journalArea').innerHTML = DAYS.map(d => {
-            const key = `${currentUser}_w${currentWeek}_${d}`;
-            const data = JSON.parse(localStorage.getItem(key) || '{"hw":"","h1":"","h2":"","sad":""}');
-            return `
-            <div class="day-card">
-                <h3>📅 يوم ${d}</h3>
-                <label>📝 الواجبات:</label>
-                <textarea onchange="saveNote('${key}','hw',this.value)" placeholder="اكتب واجباتك هنا...">${data.hw}</textarea>
-                <div class="happy-box">
-                    <label>😊 أشياء سعيدة:</label>
-                    <textarea placeholder="حدث سعيد 1" onchange="saveNote('${key}','h1',this.value)">${data.h1}</textarea>
-                    <textarea placeholder="حدث سعيد 2" onchange="saveNote('${key}','h2',this.value)">${data.h2}</textarea>
-                </div>
-                <div class="sad-box">
-                    <label>😔 شيء أزعجني:</label>
-                    <textarea onchange="saveNote('${key}','sad',this.value)" placeholder="ماذا حدث؟">${data.sad}</textarea>
-                </div>
-            </div>`;
-        }).join('');
-    }
-
-    function saveNote(key, field, val) {
-        let data = JSON.parse(localStorage.getItem(key) || '{}');
-        data[field] = val;
-        localStorage.setItem(key, JSON.stringify(data));
-        autoSync();
-    }
-
-    // Quiz Logic
-    function startQuiz() {
-        qIdx = 1; currentScore = 0;
-        document.getElementById('quizBox').classList.remove('hidden');
-        document.getElementById('quizResult').classList.add('hidden');
-        genQ();
-    }
-
-    function genQ() {
-        const isDiv = Math.random() > 0.5;
-        if(isDiv) {
-            let b = Math.floor(Math.random()*9)+2, res = Math.floor(Math.random()*9)+2;
-            document.getElementById('qDisplay').innerText = `${res*b} ÷ ${b}`;
-            currentAns = res;
-        } else {
-            let a = Math.floor(Math.random()*9)+2, b = Math.floor(Math.random()*9)+2;
-            document.getElementById('qDisplay').innerText = `${a} × ${b}`;
-            currentAns = a*b;
+    // --- 1. التحميل عند فتح الصفحة ---
+    window.onload = async function() {
+        const token = localStorage.getItem('gh_token');
+        const repo = localStorage.getItem('gh_repo');
+        
+        if (token && repo) {
+            await fetchFromCloud(token, repo);
         }
-        document.getElementById('qIdx').innerText = qIdx;
-        document.getElementById('qInput').value = '';
-        document.getElementById('qInput').focus();
-    }
+        switchUser('dahoum');
+    };
 
-    function checkMath() {
-        const val = parseInt(document.getElementById('qInput').value);
-        const fb = document.getElementById('feedback');
-        fb.classList.remove('hidden');
-        if(val === currentAns) {
-            fb.innerText = "أحسنت! إجابة صحيحة 🌟 +10 نقاط";
-            fb.className = "feedback-box correct";
-            currentScore += 10;
-        } else {
-            fb.innerHTML = `خطأ 🛑 الإجابة الصحيحة هي: <b>${currentAns}</b>`;
-            fb.className = "feedback-box wrong";
+    async function fetchFromCloud(token, repo) {
+        updateStatus("جاري مزامنة بياناتك من السحاب... 🔄");
+        const url = `https://api.github.com/repos/${repo}/contents/database.json`;
+        try {
+            const res = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
+            if (res.ok) {
+                const json = await res.json();
+                const cloudData = JSON.parse(decodeURIComponent(escape(atob(json.content))));
+                // دمج البيانات السحابية مع الجهاز
+                Object.keys(cloudData).forEach(key => localStorage.setItem(key, cloudData[key]));
+                updateStatus("تم تحديث البيانات من السحاب ✅");
+            } else {
+                updateStatus("لم يتم العثور على ملف سحابي، سيتم إنشاؤه 🆕");
+            }
+        } catch (e) {
+            updateStatus("فشلت المزامنة، تأكد من الإنترنت ❌");
         }
-        setTimeout(() => {
-            fb.classList.add('hidden');
-            if(qIdx < 5) { qIdx++; genQ(); } 
-            else finishQuiz();
-        }, 2000);
     }
 
-    function finishQuiz() {
-        document.getElementById('quizBox').classList.add('hidden');
-        document.getElementById('quizResult').classList.remove('hidden');
-        document.getElementById('earnedPts').innerText = currentScore;
-        let total = parseInt(localStorage.getItem(currentUser + '_pts') || 0) + currentScore;
-        localStorage.setItem(currentUser + '_pts', total);
-        document.getElementById('uPts').innerText = total;
-        document.getElementById('uLvl').innerText = Math.floor(total/100) + 1;
-        autoSync();
+    // --- 2. الحفظ التلقائي عند أي تغيير ---
+    function saveAndSync() {
+        localStorage.setItem(currentUser + '_diary', document.getElementById('diaryInput').value);
+        updateStatus("جاري الحفظ محلياً... 💾");
+        
+        clearTimeout(syncTimeout);
+        syncTimeout = setTimeout(pushToCloud, 2000); // رفع للسحاب بعد ثانيتين من التوقف عن الكتابة
     }
 
-    // Admin & Sync
-    function openAdmin() {
-        const pass = prompt("أدخل الرقم السري للآدمن:");
-        if(pass === "123456") {
-            document.getElementById('adminModal').style.display = 'flex';
-            document.getElementById('ghToken').value = localStorage.getItem('gh_token') || '';
-            document.getElementById('ghRepo').value = localStorage.getItem('gh_repo') || '';
-        } else if(pass !== null) alert("رقم سري خاطئ!");
-    }
+    async function pushToCloud() {
+        const token = localStorage.getItem('gh_token');
+        const repo = localStorage.getItem('gh_repo');
+        if (!token || !repo) return;
 
-    function closeAdmin() { document.getElementById('adminModal').style.display = 'none'; }
-
-    function addBonus(user) {
-        let stars = parseInt(localStorage.getItem(user + '_stars') || 0) + 1;
-        localStorage.setItem(user + '_stars', stars);
-        if(user === currentUser) document.getElementById('uStars').innerText = stars;
-        alert(`تم إضافة نجمة لـ ${user === 'dahoum' ? 'دحوم' : 'ريمي'}! ⭐`);
-        autoSync();
-    }
-
-    function uploadImg(e) {
-        const r = new FileReader();
-        r.onload = () => {
-            document.getElementById('uImg').src = r.result;
-            localStorage.setItem(currentUser + '_img', r.result);
-            autoSync();
-        };
-        r.readAsDataURL(e.target.files[0]);
-    }
-
-    async function syncNow() {
-        const token = document.getElementById('ghToken').value, repo = document.getElementById('ghRepo').value;
-        if(!token || !repo) return alert("أدخل بيانات GitHub");
-        localStorage.setItem('gh_token', token); localStorage.setItem('gh_repo', repo);
+        updateStatus("جاري الرفع للسحاب... ☁️");
         
         const data = {};
         for(let i=0; i<localStorage.length; i++){
-            let k = localStorage.key(i);
-            if(!k.startsWith('gh_')) data[k] = localStorage.getItem(k);
+            let key = localStorage.key(i);
+            if(!key.startsWith('gh_')) data[key] = localStorage.getItem(key);
         }
 
-        const url = `https://api.github.com/repos/${repo}/contents/data.json`;
+        const url = `https://api.github.com/repos/${repo}/contents/database.json`;
         try {
             const res = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
             let sha = res.ok ? (await res.json()).sha : "";
-            const put = await fetch(url, {
+            
+            const putRes = await fetch(url, {
                 method: 'PUT',
-                headers: { 'Authorization': `token ${token}` },
-                body: JSON.stringify({ message: "Update Data", content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2)))), sha: sha })
+                headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: "تحديث تلقائي للبيانات",
+                    content: btoa(unescape(encodeURIComponent(JSON.stringify(data)))),
+                    sha: sha
+                })
             });
-            if(put.ok) alert("تمت المزامنة بنجاح! ✅");
-            else alert("فشلت المزامنة، تأكد من الـ Token");
-        } catch(e) { alert("خطأ في الاتصال"); }
-    }
-
-    function autoSync() {
-        if(localStorage.getItem('gh_token')) {
-            console.log("Auto-syncing data...");
-            // يمكن استدعاء syncNow هنا بدون alert
+            if (putRes.ok) updateStatus("تم الحفظ في السحاب بنجاح ✅");
+        } catch (e) {
+            updateStatus("خطأ في الرفع للسحاب ❌");
         }
     }
 
-    window.onload = () => switchUser('dahoum');
+    // --- وظائف الواجهة ---
+    function switchUser(u) {
+        currentUser = u;
+        document.body.className = u + '-theme';
+        document.documentElement.style.setProperty('--active', CONFIG[u].color);
+        document.getElementById('welcomeName').innerText = "بطلنا " + CONFIG[u].name;
+        document.getElementById('starPts').innerText = localStorage.getItem(u + '_pts') || 0;
+        document.getElementById('userImg').src = localStorage.getItem(u + '_img') || 'https://via.placeholder.com/150';
+        document.getElementById('diaryInput').value = localStorage.getItem(u + '_diary') || '';
+    }
+
+    function uploadImg(e) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            document.getElementById('userImg').src = reader.result;
+            localStorage.setItem(currentUser + '_img', reader.result);
+            pushToCloud(); // رفع الصورة فوراً
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    }
+
+    function saveAdmin() {
+        if (document.getElementById('adminPass').value !== "123456") return alert("الرقم السري خطأ!");
+        localStorage.setItem('gh_token', document.getElementById('ghToken').value);
+        localStorage.setItem('gh_repo', document.getElementById('ghRepo').value);
+        alert("تم الحفظ! سيتم الآن رفع البيانات للسحاب.");
+        pushToCloud();
+    }
+
+    function showSec(id, btn) {
+        document.getElementById('sec-home').classList.add('hidden');
+        document.getElementById('sec-admin').classList.add('hidden');
+        document.getElementById('sec-' + id).classList.remove('hidden');
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function updateStatus(msg) {
+        document.getElementById('syncIndicator').innerText = msg;
+    }
 </script>
 </body>
 </html>
