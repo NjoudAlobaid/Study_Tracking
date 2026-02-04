@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الأبطال | دحوم وريمي - النسخة المصححة</title>
+    <title>منصة الأبطال | دحوم وريمي - GitHub Storage</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@400;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --dahoum-main: #0077b6; 
-            --dahoum-grad: linear-gradient(135deg, #0077b6, #00b4d8);
+            --dahoum-light: #00b4d8;
+            --dahoum-grad: linear-gradient(135deg, #0077b6, #00b4d8, #48cae4);
             --remy-main: #6a1b9a; 
-            --remy-grad: linear-gradient(135deg, #6a1b9a, #9c27b0);
-            --bg: #f8fafc; 
+            --remy-light: #9c27b0;
+            --remy-grad: linear-gradient(135deg, #6a1b9a, #9c27b0, #ba68c8);
+            --bg: #f0f4f8;
             --gold: #FFD700;
             --success: #4caf50;
             --error: #f44336;
+            --warning: #ff9800;
         }
         
         * { 
@@ -28,16 +31,82 @@
             background: var(--bg); 
             transition: 0.3s; 
             padding-bottom: 50px; 
+            min-height: 100vh;
         }
         
         body.dahoum-theme { 
             --active: var(--dahoum-main); 
-            --active-grad: var(--dahoum-grad); 
+            --active-grad: var(--dahoum-grad);
+            --active-light: var(--dahoum-light);
         }
         
         body.remy-theme { 
             --active: var(--remy-main); 
-            --active-grad: var(--remy-grad); 
+            --active-grad: var(--remy-grad);
+            --active-light: var(--remy-light);
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255,255,255,0.3);
+            border-top: 8px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 1.5rem;
+            margin-top: 20px;
+            font-weight: 700;
+        }
+
+        .loading-error {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            margin: 20px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .loading-error h3 {
+            color: var(--error);
+            margin-bottom: 15px;
+        }
+
+        .loading-error p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
         }
 
         /* Navigation */
@@ -54,6 +123,15 @@
             border-bottom: 4px solid var(--active); 
         }
         
+        .app-logo {
+            font-weight: 900;
+            font-size: 1.4rem;
+            background: var(--active-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
         .btn { 
             padding: 10px 25px; 
             border: none; 
@@ -70,13 +148,20 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
         .btn-dahoum { background: var(--dahoum-grad); }
         .btn-remy { background: var(--remy-grad); }
-        .btn-admin { background: #455a64; font-size: 0.8rem; }
+        .btn-admin { background: #455a64; font-size: 0.85rem; }
+        .btn-setup { background: var(--warning); font-size: 0.85rem; }
 
         .container { 
-            max-width: 1200px; 
-            margin: 20px auto; 
+            max-width: 1400px; 
+            margin: 30px auto; 
             padding: 0 20px; 
         }
 
@@ -87,116 +172,182 @@
             border-radius: 35px; 
             padding: 40px; 
             text-align: center; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15); 
             margin-bottom: 30px; 
-            position: relative; 
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 15s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
         }
         
         .profile-wrap { 
             position: relative; 
-            width: 140px; 
-            height: 140px; 
-            margin: 0 auto 20px; 
+            width: 150px; 
+            height: 150px; 
+            margin: 0 auto 20px;
+            z-index: 1;
         }
         
         .profile-img { 
             width: 100%; 
             height: 100%; 
             border-radius: 50%; 
-            border: 5px solid white; 
-            object-fit: cover; 
+            border: 6px solid white; 
+            object-fit: cover;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .profile-img:hover {
+            transform: scale(1.05);
         }
         
         .upload-btn { 
             position: absolute; 
-            bottom: 0; 
-            right: 0; 
+            bottom: 5px; 
+            right: 5px; 
             background: white; 
             border-radius: 50%; 
-            width: 40px; 
-            height: 40px; 
+            width: 45px; 
+            height: 45px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             cursor: pointer; 
             color: var(--active); 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
+            font-size: 1.3rem;
         }
 
         .upload-btn:hover {
-            transform: scale(1.1);
+            transform: scale(1.15);
         }
         
         .stats-row { 
             display: flex; 
             justify-content: center; 
-            gap: 15px; 
-            margin-top: 20px; 
-            flex-wrap: wrap; 
+            gap: 20px; 
+            margin-top: 25px; 
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
         }
         
         .stat-item { 
-            background: rgba(255,255,255,0.2); 
+            background: rgba(255,255,255,0.25); 
             backdrop-filter: blur(10px); 
-            padding: 10px 25px; 
-            border-radius: 20px; 
-            min-width: 120px; 
+            padding: 15px 30px; 
+            border-radius: 25px; 
+            min-width: 140px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
         .stat-val { 
-            font-size: 1.8rem; 
+            font-size: 2rem; 
             font-weight: 900; 
             display: block; 
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.95;
         }
 
         /* Badges */
         .badges-row {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 12px;
+            margin-top: 20px;
             flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
         }
 
         .badge {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: rgba(255,255,255,0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             transition: all 0.3s ease;
             position: relative;
+            border: 3px solid transparent;
         }
 
         .badge.earned {
             background: rgba(255,255,255,0.4);
+            border-color: rgba(255,255,255,0.6);
             transform: scale(1.1);
             animation: badgeGlow 2s infinite;
         }
 
         .badge.locked {
-            opacity: 0.3;
+            opacity: 0.25;
             filter: grayscale(100%);
         }
 
         @keyframes badgeGlow {
-            0%, 100% { box-shadow: 0 0 10px rgba(255,255,255,0.5); }
-            50% { box-shadow: 0 0 20px rgba(255,255,255,0.8); }
+            0%, 100% { box-shadow: 0 0 15px rgba(255,255,255,0.4); }
+            50% { box-shadow: 0 0 25px rgba(255,255,255,0.7); }
         }
+
+        /* Sync Status */
+        .sync-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .sync-status.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .sync-status.success { background: var(--success); }
+        .sync-status.error { background: var(--error); }
+        .sync-status.syncing { background: #2196F3; }
 
         /* Quiz Section */
         .quiz-container { 
             background: white; 
             border-radius: 30px; 
-            padding: 30px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            padding: 35px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08); 
             margin-bottom: 30px; 
             text-align: center; 
-            border: 2px solid var(--active); 
+            border: 3px solid var(--active); 
         }
         
         .math-text { 
@@ -204,16 +355,16 @@
             font-size: 4rem; 
             font-weight: 800; 
             color: var(--active); 
-            margin: 20px 0; 
+            margin: 25px 0; 
         }
         
         .math-input { 
             font-size: 2.5rem; 
-            width: 160px; 
+            width: 180px; 
             text-align: center; 
-            border: 3px solid #eee; 
+            border: 3px solid #e0e0e0; 
             border-radius: 20px; 
-            padding: 10px; 
+            padding: 12px; 
             font-family: 'Cairo'; 
             transition: all 0.3s ease;
         }
@@ -221,100 +372,116 @@
         .math-input:focus {
             outline: none;
             border-color: var(--active);
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            transform: scale(1.05);
         }
         
         .feedback-box { 
-            margin-top: 20px; 
+            margin-top: 25px; 
             font-weight: bold; 
-            font-size: 1.3rem; 
-            min-height: 40px; 
-            border-radius: 15px; 
-            padding: 10px; 
+            font-size: 1.4rem; 
+            min-height: 50px; 
+            border-radius: 20px; 
+            padding: 15px; 
             animation: slideIn 0.3s ease;
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(-15px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
         .correct { 
-            background: #d4edda; 
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
             color: #155724; 
-            border: 2px solid #c3e6cb; 
+            border: 3px solid #28a745; 
         }
         
         .wrong { 
-            background: #f8d7da; 
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
             color: #721c24; 
-            border: 2px solid #f5c6cb; 
+            border: 3px solid #dc3545; 
         }
 
-        .quiz-completed {
-            padding: 40px;
-            text-align: center;
-        }
-
-        .quiz-completed h2 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: var(--active);
-        }
-
-        /* Tables & Cards */
+        /* Section Headers */
         .section-header { 
-            font-size: 1.8rem; 
+            font-size: 2rem; 
             color: var(--active); 
-            margin: 40px 0 20px; 
+            margin: 50px 0 25px; 
             display: flex; 
             align-items: center; 
-            gap: 10px; 
+            gap: 15px;
+            font-weight: 800;
+        }
+
+        .section-icon {
+            font-size: 2.5rem;
         }
         
+        /* Zoom Cards */
         .zoom-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 20px; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 25px; 
         }
         
         .zoom-card { 
             background: white; 
-            padding: 25px; 
+            padding: 28px; 
             border-radius: 25px; 
             border-right: 8px solid #2d8cff; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.03); 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06); 
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .zoom-card::before {
+            content: '📹';
+            position: absolute;
+            top: -25px;
+            left: -25px;
+            font-size: 10rem;
+            opacity: 0.04;
         }
 
         .zoom-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(45, 140, 255, 0.2);
+        }
+
+        .zoom-card strong {
+            font-size: 1.4rem;
+            color: #2d8cff;
+            display: block;
+            margin-bottom: 12px;
         }
         
         .zoom-btn { 
             display: block; 
-            background: #2d8cff; 
+            background: linear-gradient(135deg, #2d8cff, #4a9eff); 
             color: white; 
             text-decoration: none; 
             text-align: center; 
-            padding: 12px; 
-            border-radius: 15px; 
-            margin-top: 15px; 
-            font-weight: bold; 
+            padding: 14px; 
+            border-radius: 18px; 
+            margin-top: 18px; 
+            font-weight: 700;
             transition: all 0.3s ease;
+            box-shadow: 0 5px 18px rgba(45, 140, 255, 0.3);
         }
 
         .zoom-btn:hover {
-            background: #1976d2;
             transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(45, 140, 255, 0.5);
         }
         
+        /* School Table */
         .table-wrap { 
             background: white; 
             border-radius: 25px; 
             overflow-x: auto; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            box-shadow: 0 10px 35px rgba(0,0,0,0.08); 
         }
         
         table { 
@@ -324,112 +491,116 @@
         }
         
         th, td { 
-            padding: 15px; 
+            padding: 18px; 
             text-align: center; 
-            border: 1px solid #f1f1f1; 
+            border: 1px solid #f5f5f5; 
         }
         
         th { 
             background: var(--active); 
-            color: white; 
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .day-cell { 
-            background: #f8fafc; 
+            background: linear-gradient(135deg, #f8fafc, #e9ecef); 
             font-weight: 900; 
-            color: var(--active); 
+            color: var(--active);
+            font-size: 1.1rem;
         }
 
         /* Journal */
         .week-picker { 
             display: flex; 
             justify-content: center; 
-            gap: 10px; 
-            margin-bottom: 20px; 
+            gap: 15px; 
+            margin-bottom: 30px; 
             flex-wrap: wrap;
         }
         
         .week-btn { 
-            padding: 8px 20px; 
-            border-radius: 20px; 
-            border: 2px solid var(--active); 
+            padding: 12px 28px; 
+            border-radius: 25px; 
+            border: 3px solid var(--active); 
             cursor: pointer; 
-            font-weight: bold; 
-            background: transparent; 
+            font-weight: 700; 
+            background: white; 
             color: var(--active); 
             font-family: 'Cairo';
             transition: all 0.3s ease;
+            font-size: 1rem;
         }
         
         .week-btn.active { 
             background: var(--active); 
-            color: white; 
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
 
-        .week-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        .week-btn:hover:not(.active) {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
         }
         
         .journal-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
-            gap: 20px; 
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); 
+            gap: 25px; 
         }
         
         .day-card { 
             background: white; 
-            padding: 25px; 
+            padding: 28px; 
             border-radius: 25px; 
-            border-top: 8px solid var(--active); 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-top: 8px solid var(--active);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
             transition: all 0.3s ease;
         }
 
         .day-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+        }
+
+        .day-card h3 {
+            color: var(--active);
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .day-card label {
+            display: block;
+            font-weight: 700;
+            margin: 18px 0 10px 0;
+            color: #333;
+            font-size: 1.05rem;
         }
         
         textarea { 
             width: 100%; 
             padding: 15px; 
             border-radius: 15px; 
-            border: 1px solid #eee; 
+            border: 2px solid #e0e0e0; 
             font-family: 'Cairo'; 
-            margin-top: 8px; 
             resize: vertical; 
             transition: all 0.3s ease;
-            min-height: 80px;
+            font-size: 1rem;
+            min-height: 90px;
+            background: #fafafa;
         }
 
         textarea:focus {
             outline: none;
             border-color: var(--active);
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            background: white;
+            box-shadow: 0 0 15px rgba(0,0,0,0.08);
         }
 
-        /* Cloud Status & Admin */
-        .sync-toast { 
-            position: fixed; 
-            bottom: 20px; 
-            right: 20px; 
-            background: rgba(0,0,0,0.8); 
-            color: white; 
-            padding: 8px 15px; 
-            border-radius: 10px; 
-            font-size: 0.8rem; 
-            z-index: 2000; 
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .sync-toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
+        /* Modal */
         .modal { 
             display: none; 
             position: fixed; 
@@ -437,9 +608,9 @@
             left: 0; 
             width: 100%; 
             height: 100%; 
-            background: rgba(0,0,0,0.6); 
-            backdrop-filter: blur(10px); 
-            z-index: 2000; 
+            background: rgba(0,0,0,0.7); 
+            backdrop-filter: blur(15px); 
+            z-index: 3000; 
             align-items: center; 
             justify-content: center; 
         }
@@ -451,90 +622,155 @@
         .modal-content { 
             background: white; 
             width: 90%; 
-            max-width: 500px; 
-            padding: 35px; 
+            max-width: 550px; 
+            padding: 40px; 
             border-radius: 30px; 
-            max-height: 85vh;
+            max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
             animation: modalSlide 0.3s ease;
         }
 
         @keyframes modalSlide {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: scale(0.9) translateY(-30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-content h3 {
+            text-align: center;
+            color: var(--active);
+            font-size: 2rem;
+            margin-bottom: 25px;
         }
         
         .modal-input { 
             width: 100%; 
-            padding: 12px; 
-            margin: 10px 0; 
-            border-radius: 12px; 
-            border: 1px solid #ddd; 
+            padding: 14px; 
+            margin: 12px 0; 
+            border-radius: 15px; 
+            border: 2px solid #e0e0e0; 
             font-family: 'Cairo'; 
             transition: all 0.3s ease;
+            font-size: 1rem;
         }
 
         .modal-input:focus {
             outline: none;
             border-color: var(--active);
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-right: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+
+        .info-box p {
+            color: #1976d2;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-right: 4px solid #ff9800;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+
+        .warning-box p {
+            color: #e65100;
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
         
-        .hidden { display: none; }
+        .hidden { display: none !important; }
 
-        /* Responsive Design */
+        /* Responsive */
         @media (max-width: 768px) {
-            .math-text { font-size: 2.5rem; }
-            .math-input { font-size: 1.8rem; width: 120px; }
-            .hero-card { padding: 25px; }
-            .profile-wrap { width: 100px; height: 100px; }
-            .app-bar { flex-direction: column; gap: 10px; }
-            .section-header { font-size: 1.4rem; }
+            .math-text { font-size: 2.8rem; }
+            .math-input { font-size: 2rem; width: 150px; }
+            .hero-card { padding: 30px 20px; }
+            .profile-wrap { width: 120px; height: 120px; }
+            .app-bar { 
+                flex-direction: column; 
+                gap: 12px; 
+                padding: 15px;
+            }
+            .section-header { 
+                font-size: 1.6rem;
+                margin: 35px 0 20px;
+            }
             .container { padding: 0 15px; }
             .zoom-grid, .journal-grid { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 480px) {
-            .stats-row { gap: 8px; }
-            .stat-item { min-width: 90px; padding: 8px 15px; }
-            .stat-val { font-size: 1.4rem; }
+            .stat-item {
+                min-width: 110px;
+                padding: 12px 20px;
+            }
+            .stat-val { font-size: 1.6rem; }
         }
     </style>
 </head>
 <body class="dahoum-theme" id="appBody">
 
-    <div id="syncStatus" class="sync-toast">جاري التحقق من السحاب... ☁️</div>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loadingText">جاري تحميل البيانات...</div>
+    </div>
 
+    <!-- Sync Status Toast -->
+    <div id="syncStatus" class="sync-status">
+        <span id="syncIcon">☁️</span>
+        <span id="syncText">جاري المزامنة...</span>
+    </div>
+
+    <!-- App Bar -->
     <div class="app-bar">
-        <div style="font-weight: 900; font-size: 1.4rem; color: var(--active);">🌟 منصة الأبطال</div>
+        <div class="app-logo">🌟 منصة الأبطال</div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="btn btn-dahoum" onclick="switchUser('dahoum')" aria-label="الانتقال لحساب دحوم">دحوم 👦</button>
-            <button class="btn btn-remy" onclick="switchUser('remy')" aria-label="الانتقال لحساب ريمي">ريمي 👧</button>
-            <button class="btn btn-admin" onclick="openAdmin()" aria-label="فتح لوحة الإدارة">⚙️</button>
+            <button class="btn btn-dahoum" onclick="switchUser('dahoum')" aria-label="الانتقال لحساب دحوم">
+                دحوم 👦
+            </button>
+            <button class="btn btn-remy" onclick="switchUser('remy')" aria-label="الانتقال لحساب ريمي">
+                ريمي 👧
+            </button>
+            <button class="btn btn-admin" onclick="openAdmin()" aria-label="فتح لوحة الإدارة">
+                ⚙️ إدارة
+            </button>
+            <button class="btn btn-setup" onclick="openSetup()" aria-label="إعدادات GitHub" id="setupBtn">
+                ⚙️ إعداد
+            </button>
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" id="mainContent">
         <!-- Hero Stats -->
         <div class="hero-card">
             <div class="profile-wrap">
-                <img id="uImg" class="profile-img" src="https://via.placeholder.com/150" alt="الصورة الشخصية">
-                <label class="upload-btn" onclick="document.getElementById('fileInp').click()" aria-label="تغيير الصورة الشخصية">📷</label>
+                <img id="uImg" class="profile-img" src="https://via.placeholder.com/150/0077b6/ffffff?text=👦" alt="الصورة الشخصية">
+                <label class="upload-btn" onclick="document.getElementById('fileInp').click()" aria-label="تغيير الصورة الشخصية">
+                    📷
+                </label>
                 <input type="file" id="fileInp" class="hidden" accept="image/*" onchange="uploadImg(event)">
             </div>
             <h1 id="uWelcome">أهلاً بالبطل دحوم!</h1>
             <div class="stats-row">
                 <div class="stat-item">
                     <span class="stat-val" id="uStars">0</span>
-                    <span>النجوم ⭐</span>
+                    <span class="stat-label">النجوم ⭐</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-val" id="uPts">0</span>
-                    <span>النقاط 🎯</span>
+                    <span class="stat-label">النقاط 🎯</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-val" id="uLvl">1</span>
-                    <span>المستوى 🏆</span>
+                    <span class="stat-label">المستوى 🏆</span>
                 </div>
             </div>
             <div class="badges-row" id="badgesArea"></div>
@@ -542,7 +778,9 @@
 
         <!-- Math Challenge -->
         <div class="quiz-container">
-            <h3 style="color:var(--active); margin-bottom: 15px;">🧮 تحدي الرياضيات اليومي (5 أسئلة)</h3>
+            <h3 style="color:var(--active); margin-bottom: 20px; font-size: 1.8rem;">
+                🧮 تحدي الرياضيات اليومي (5 أسئلة)
+            </h3>
             
             <div id="quizBox">
                 <div class="math-text" id="qDisplay">-- × --</div>
@@ -557,38 +795,42 @@
                 <br><br>
                 <button 
                     class="btn" 
-                    style="background:var(--active); padding: 15px 50px; font-size: 1.2rem;" 
+                    style="background:var(--active); padding: 16px 55px; font-size: 1.3rem;" 
                     onclick="checkMath()"
                 >
                     تحقق ✅
                 </button>
                 <div id="feedback" class="feedback-box hidden"></div>
-                <p style="margin-top: 15px; color: #666;">
-                    سؤال رقم <span id="qIdx">1</span> من 5 | 
-                    صحيحة: <span id="correctCount">0</span> ✅ | 
-                    خاطئة: <span id="wrongCount">0</span> ❌
+                <p style="margin-top: 20px; color: #666; font-size: 1.05rem;">
+                    سؤال <span id="qIdx">1</span>/5 | 
+                    صحيحة: <strong style="color: var(--success);" id="correctCount">0</strong> ✅ | 
+                    خاطئة: <strong style="color: var(--error);" id="wrongCount">0</strong> ❌
                 </p>
             </div>
             
-            <div id="quizResult" class="hidden quiz-completed">
-                <h2>🎉 ممتاز! أكملت التحدي!</h2>
-                <p style="font-size: 1.5rem; margin: 20px 0;">
-                    حصلت على <strong id="earnedPts">0</strong> نقطة
+            <div id="quizResult" class="hidden" style="padding: 40px;">
+                <h2 style="font-size: 2.5rem; margin-bottom: 25px; color: var(--active);">
+                    🎉 ممتاز! أكملت التحدي!
+                </h2>
+                <p style="font-size: 1.8rem; margin: 25px 0; font-weight: 700;">
+                    حصلت على <strong style="color: var(--gold);" id="earnedPts">0</strong> نقطة
                 </p>
-                <p style="color: #666; margin-bottom: 20px;">
+                <p style="color: #666; margin-bottom: 25px; font-size: 1.2rem;">
                     النتيجة: <strong id="finalScore">0/5</strong>
                 </p>
-                <button class="btn" style="background:#444; padding: 12px 35px;" onclick="startQuiz()">
+                <button class="btn" style="background:#444; padding: 14px 40px; font-size: 1.1rem;" onclick="startQuiz()">
                     تحدي جديد 🔄
                 </button>
             </div>
 
-            <div id="quizDone" class="hidden quiz-completed">
-                <h2>✅ أحسنت! أكملت التحدي اليوم</h2>
-                <p style="font-size: 1.3rem; color: #666; margin: 20px 0;">
-                    عد غداً لتحدي جديد!
+            <div id="quizDone" class="hidden" style="padding: 50px 20px;">
+                <h2 style="font-size: 2.3rem; color: var(--success); margin-bottom: 20px;">
+                    ✅ أحسنت! أكملت التحدي اليوم
+                </h2>
+                <p style="font-size: 1.4rem; color: #666; margin: 25px 0;">
+                    عد غداً لتحدي جديد! 🌟
                 </p>
-                <p style="font-size: 1.1rem;">
+                <p style="font-size: 1.2rem; color: var(--active);">
                     إجمالي التحديات: <strong id="totalQuizzes">0</strong> 🎯
                 </p>
             </div>
@@ -596,14 +838,14 @@
 
         <!-- Zoom Classes -->
         <div class="section-header">
-            <span>📺</span>
+            <span class="section-icon">📺</span>
             <h2>مواعيد حصص الزووم</h2>
         </div>
         <div class="zoom-grid" id="zoomArea"></div>
 
         <!-- School Schedule -->
         <div class="section-header">
-            <span>🏫</span>
+            <span class="section-icon">🏫</span>
             <h2>الجدول المدرسي</h2>
         </div>
         <div class="table-wrap">
@@ -626,7 +868,7 @@
 
         <!-- Weekly Journal -->
         <div class="section-header">
-            <span>📓</span>
+            <span class="section-icon">📓</span>
             <h2>مفكرة الإنجاز والمشاعر</h2>
         </div>
         <div class="week-picker">
@@ -638,31 +880,99 @@
         <div class="journal-grid" id="journalArea"></div>
     </div>
 
+    <!-- Setup Modal (First Time) -->
+    <div id="setupModal" class="modal">
+        <div class="modal-content">
+            <h3>🚀 مرحباً في منصة الأبطال!</h3>
+            
+            <div class="info-box">
+                <p>
+                    <strong>📦 نظام التخزين:</strong><br>
+                    جميع البيانات (الصور، النقاط، المذكرات) تُحفظ في ملف <code>database.json</code> على GitHub
+                </p>
+            </div>
+
+            <h4 style="margin: 25px 0 15px 0; color: var(--active);">📝 خطوات الإعداد:</h4>
+            
+            <div style="text-align: right; line-height: 2; color: #555; font-size: 0.95rem;">
+                <p>1️⃣ اذهب إلى <a href="https://github.com" target="_blank" style="color: var(--active);">GitHub.com</a></p>
+                <p>2️⃣ أنشئ مستودع جديد (Repository)</p>
+                <p>3️⃣ اذهب إلى Settings → Developer Settings → Personal Access Tokens → Tokens (classic)</p>
+                <p>4️⃣ أنشئ Token جديد مع صلاحية <code>repo</code></p>
+                <p>5️⃣ انسخ الـ Token والصقه أدناه</p>
+            </div>
+
+            <h4 style="margin: 25px 0 10px 0; color: var(--active);">🔐 أدخل معلومات GitHub:</h4>
+            <input 
+                type="password" 
+                id="setupToken" 
+                class="modal-input" 
+                placeholder="GitHub Token (ghp_xxxxxxxxxxxx)"
+                aria-label="GitHub Token"
+            >
+            <input 
+                type="text" 
+                id="setupRepo" 
+                class="modal-input" 
+                placeholder="اسم المستودع (username/repo-name)"
+                aria-label="اسم المستودع"
+            >
+
+            <div class="warning-box">
+                <p>
+                    ⚠️ <strong>مهم:</strong> احتفظ بـ Token في مكان آمن. ستحتاجه للوصول للمنصة من أجهزة أخرى.
+                </p>
+            </div>
+            
+            <button 
+                class="btn" 
+                style="background: var(--success); color: white; width: 100%; margin-top: 20px; padding: 16px; font-size: 1.2rem;" 
+                onclick="saveSetup()"
+            >
+                حفظ والبدء 🚀
+            </button>
+        </div>
+    </div>
+
     <!-- Admin Modal -->
     <div id="adminModal" class="modal">
         <div class="modal-content">
-            <h3 style="text-align: center; color: var(--active); margin-bottom: 20px;">⚙️ لوحة التحكم</h3>
+            <h3>⚙️ لوحة التحكم</h3>
             
-            <h4 style="margin: 20px 0 10px 0;">🌟 إضافة نجوم</h4>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-dahoum" style="flex: 1;" onclick="addReward('dahoum')">دحوم +1 ⭐</button>
-                <button class="btn btn-remy" style="flex: 1;" onclick="addReward('remy')">ريمي +1 ⭐</button>
+            <h4 style="margin: 25px 0 15px 0; color: var(--active);">🌟 إضافة مكافآت</h4>
+            <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                <button class="btn btn-dahoum" style="flex: 1; padding: 14px;" onclick="addReward('dahoum', 'stars')">
+                    دحوم +1 ⭐
+                </button>
+                <button class="btn btn-remy" style="flex: 1; padding: 14px;" onclick="addReward('remy', 'stars')">
+                    ريمي +1 ⭐
+                </button>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn" style="flex: 1; background: linear-gradient(135deg, #f093fb, #f5576c); padding: 14px;" onclick="addReward('dahoum', 'points', 10)">
+                    دحوم +10 🎯
+                </button>
+                <button class="btn" style="flex: 1; background: linear-gradient(135deg, #4facfe, #00f2fe); padding: 14px;" onclick="addReward('remy', 'points', 10)">
+                    ريمي +10 🎯
+                </button>
             </div>
 
-            <h4 style="margin: 20px 0 10px 0;">☁️ إعدادات GitHub</h4>
-            <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">
-                سيتم حفظ البيانات في database.json
-            </p>
+            <hr style="margin: 30px 0; border: none; border-top: 2px solid #eee;">
+
+            <h4 style="margin: 20px 0 15px 0; color: var(--active);">☁️ إعدادات GitHub</h4>
+            <div class="info-box">
+                <p>معلومات الاتصال الحالية بـ GitHub</p>
+            </div>
             <input 
                 type="password" 
-                id="ghToken" 
+                id="adminToken" 
                 class="modal-input" 
                 placeholder="GitHub Token"
                 aria-label="GitHub Token"
             >
             <input 
                 type="text" 
-                id="ghRepo" 
+                id="adminRepo" 
                 class="modal-input" 
                 placeholder="اسم المستودع (username/repo)"
                 aria-label="اسم المستودع"
@@ -670,14 +980,23 @@
             
             <button 
                 class="btn" 
-                style="background: var(--success); color: white; width: 100%; margin-top: 15px; padding: 12px;" 
-                onclick="saveAdmin()"
+                style="background: var(--success); color: white; width: 100%; margin-top: 20px; padding: 15px; font-size: 1.1rem;" 
+                onclick="updateGitHubSettings()"
             >
-                حفظ الإعدادات ومزامنة 🚀
+                تحديث الإعدادات ومزامنة 🔄
             </button>
+
             <button 
                 class="btn" 
-                style="background: #eee; color: #333; width: 100%; margin-top: 10px; padding: 12px;" 
+                style="background: #2196F3; color: white; width: 100%; margin-top: 12px; padding: 15px; font-size: 1.1rem;" 
+                onclick="forceSyncNow()"
+            >
+                مزامنة فورية الآن ⚡
+            </button>
+            
+            <button 
+                class="btn" 
+                style="background: #eee; color: #333; width: 100%; margin-top: 12px; padding: 15px;" 
                 onclick="closeAdmin()"
             >
                 إغلاق ✖️
@@ -688,14 +1007,18 @@
 <script>
     'use strict';
 
-    // Constants
+    // ==========================================
+    // Configuration & Constants
+    // ==========================================
+    
     const DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
+    
     const BADGES = [
         { emoji: '🌟', name: '10 نجوم', req: 10, type: 'stars' },
         { emoji: '⭐', name: '25 نجمة', req: 25, type: 'stars' },
         { emoji: '🏆', name: '50 نجمة', req: 50, type: 'stars' },
-        { emoji: '🎯', name: '100 نقطة', req: 100, type: 'pts' },
-        { emoji: '🎖️', name: '500 نقطة', req: 500, type: 'pts' },
+        { emoji: '🎯', name: '100 نقطة', req: 100, type: 'points' },
+        { emoji: '🎖️', name: '500 نقطة', req: 500, type: 'points' },
         { emoji: '🧮', name: '10 تحديات', req: 10, type: 'quizzes' }
     ];
 
@@ -703,6 +1026,7 @@
         dahoum: {
             theme: "dahoum-theme",
             welcome: "أهلاً بالبطل دحوم!",
+            placeholder: "https://via.placeholder.com/150/0077b6/ffffff?text=👦",
             zoom: [
                 { t: "قرآن (أ. هاجر)", d: "أحد، اثنين، أربعاء", h: "2:30 ظ", l: "https://us05web.zoom.us/j/5552102339?pwd=7fPtK8N4zIBbY8fvreFOdeqxmP4AJL.1" },
                 { t: "إنجليزي (أ. منار)", d: "أحد، ثلاثاء", h: "6:00 م", l: "https://us05web.zoom.us/j/89914760138?pwd=GH8Uoy2ew11eBgj3YUYLTSjzUCwb9j.1" }
@@ -718,6 +1042,7 @@
         remy: {
             theme: "remy-theme",
             welcome: "أهلاً بالمبدعة ريمي!",
+            placeholder: "https://via.placeholder.com/150/6a1b9a/ffffff?text=👧",
             zoom: [
                 { t: "قرآن (أ. منه)", d: "أحد، ثلاثاء، أربعاء", h: "2:00 ظ", l: "https://us05web.zoom.us/j/4365062686?pwd=gzEitR0Y0KKyh5xukgAZwrqNXdibWx.1" },
                 { t: "إنجليزي (أ. منار)", d: "أحد، ثلاثاء", h: "6:00 م", l: "https://us05web.zoom.us/j/89914760138?pwd=GH8Uoy2ew11eBgj3YUYLTSjzUCwb9j.1" }
@@ -732,7 +1057,10 @@
         }
     };
 
+    // ==========================================
     // State Variables
+    // ==========================================
+    
     let currentUser = 'dahoum';
     let currentWeek = 1;
     let qIdx = 1;
@@ -741,156 +1069,280 @@
     let correctAnswers = 0;
     let wrongAnswers = 0;
     let syncTimer = null;
+    let appData = {}; // Main data store (loaded from GitHub)
+    let githubToken = '';
+    let githubRepo = '';
 
-    // =================================
-    // Cloud Sync Functions
-    // =================================
+    // ==========================================
+    // Initialization
+    // ==========================================
     
-    /**
-     * Initialize app and fetch data from cloud
-     */
     window.onload = async () => {
-        const token = localStorage.getItem('gh_token');
-        const repo = localStorage.getItem('gh_repo');
-        
-        if (token && repo) {
-            await fetchFromCloud(token, repo);
-        }
-        
-        switchUser('dahoum');
+        await initializeApp();
     };
 
+    async function initializeApp() {
+        try {
+            showLoading('جاري التحقق من الإعدادات...');
+            
+            // Check if GitHub is configured
+            githubToken = localStorage.getItem('gh_token') || '';
+            githubRepo = localStorage.getItem('gh_repo') || '';
+            
+            if (!githubToken || !githubRepo) {
+                // First time setup
+                hideLoading();
+                openSetup();
+                return;
+            }
+            
+            // Load data from GitHub
+            showLoading('جاري تحميل البيانات من GitHub...');
+            await loadFromGitHub();
+            
+            // Initialize UI
+            hideLoading();
+            switchUser('dahoum');
+            
+            // Hide setup button if configured
+            document.getElementById('setupBtn').classList.add('hidden');
+            
+        } catch (error) {
+            console.error('Initialization error:', error);
+            showLoadingError('فشل تحميل البيانات. الرجاء التحقق من إعدادات GitHub.');
+        }
+    }
+
+    // ==========================================
+    // GitHub Data Management
+    // ==========================================
+    
     /**
-     * Fetch data from GitHub repository
+     * Load data from GitHub
      */
-    async function fetchFromCloud(token, repo) {
-        showStatus("جاري مزامنة بياناتك... 🔄");
-        const url = `https://api.github.com/repos/${repo}/contents/database.json`;
+    async function loadFromGitHub() {
+        const url = `https://api.github.com/repos/${githubRepo}/contents/database.json`;
         
         try {
-            const res = await fetch(url, {
-                headers: { 'Authorization': `token ${token}` }
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `token ${githubToken}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
             });
             
-            if (res.ok) {
-                const json = await res.json();
-                const data = JSON.parse(decodeURIComponent(escape(atob(json.content))));
+            if (response.ok) {
+                const json = await response.json();
+                const content = decodeURIComponent(escape(atob(json.content)));
+                appData = JSON.parse(content);
                 
-                Object.keys(data).forEach(k => {
-                    localStorage.setItem(k, data[k]);
-                });
-                
-                showStatus("تم تحديث البيانات بنجاح ✅", 3000);
+                showStatus('تم تحميل البيانات بنجاح ✅', 'success', 2000);
+            } else if (response.status === 404) {
+                // File doesn't exist, create initial data
+                appData = createInitialData();
+                await saveToGitHub('إنشاء ملف البيانات الأولي');
+                showStatus('تم إنشاء ملف البيانات ✅', 'success', 2000);
             } else {
-                throw new Error('فشل في جلب البيانات');
+                throw new Error(`GitHub API error: ${response.status}`);
             }
         } catch (error) {
-            console.error('Cloud sync error:', error);
-            showStatus("فشلت المزامنة ❌", 3000);
+            console.error('Load error:', error);
+            // Use empty data if load fails
+            appData = createInitialData();
+            throw error;
         }
     }
 
     /**
-     * Push data to GitHub repository
+     * Save data to GitHub
      */
-    async function pushToCloud() {
-        const token = localStorage.getItem('gh_token');
-        const repo = localStorage.getItem('gh_repo');
+    async function saveToGitHub(commitMessage = 'تحديث البيانات') {
+        const url = `https://api.github.com/repos/${githubRepo}/contents/database.json`;
         
-        if (!token || !repo) return;
-        
-        showStatus("جاري الحفظ في السحاب... ☁️");
-        
-        // Collect all data except GitHub credentials
-        const data = {};
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (!key.startsWith('gh_')) {
-                data[key] = localStorage.getItem(key);
-            }
-        }
-        
-        const url = `https://api.github.com/repos/${repo}/contents/database.json`;
+        showStatus('جاري الحفظ...', 'syncing');
         
         try {
             // Get current file SHA
-            let sha = "";
+            let sha = '';
             try {
-                const res = await fetch(url, {
-                    headers: { 'Authorization': `token ${token}` }
+                const getResponse = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
                 });
                 
-                if (res.ok) {
-                    const json = await res.json();
+                if (getResponse.ok) {
+                    const json = await getResponse.json();
                     sha = json.sha;
                 }
             } catch (e) {
-                // File doesn't exist yet, that's okay
+                // File doesn't exist yet
             }
             
-            // Upload new data
-            const putRes = await fetch(url, {
+            // Prepare content
+            const content = JSON.stringify(appData, null, 2);
+            const encodedContent = btoa(unescape(encodeURIComponent(content)));
+            
+            // Upload to GitHub
+            const putResponse = await fetch(url, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `token ${token}`,
+                    'Authorization': `token ${githubToken}`,
+                    'Accept': 'application/vnd.github.v3+json',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: `تحديث تلقائي - ${new Date().toLocaleString('ar-SA')}`,
-                    content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2)))),
+                    message: `${commitMessage} - ${new Date().toLocaleString('ar-SA')}`,
+                    content: encodedContent,
                     sha: sha
                 })
             });
             
-            if (putRes.ok) {
-                showStatus("تم الحفظ سحابياً ✅", 2000);
+            if (putResponse.ok) {
+                showStatus('تم الحفظ بنجاح ✅', 'success', 2000);
+                return true;
             } else {
-                const error = await putRes.json();
-                throw new Error(error.message || 'خطأ غير معروف');
+                const error = await putResponse.json();
+                throw new Error(error.message || 'فشل الحفظ');
             }
         } catch (error) {
-            console.error('Push error:', error);
-            showStatus("خطأ في الحفظ ❌", 3000);
+            console.error('Save error:', error);
+            showStatus('فشل الحفظ ❌', 'error', 3000);
+            return false;
         }
     }
 
     /**
-     * Show status message with auto-hide
+     * Create initial data structure
      */
-    function showStatus(message, duration = 0) {
-        const toast = document.getElementById('syncStatus');
-        toast.innerText = message;
-        toast.classList.add('show');
+    function createInitialData() {
+        const data = {};
+        
+        ['dahoum', 'remy'].forEach(user => {
+            data[`${user}_stars`] = 0;
+            data[`${user}_points`] = 0;
+            data[`${user}_quizzes`] = 0;
+            data[`${user}_perfects`] = 0;
+            data[`${user}_lastQuiz`] = '';
+            data[`${user}_img`] = '';
+            
+            // Initialize weekly journals
+            for (let week = 1; week <= 4; week++) {
+                DAYS.forEach(day => {
+                    data[`${user}_w${week}_${day}`] = JSON.stringify({
+                        hw: '',
+                        h1: '',
+                        h2: '',
+                        sad: ''
+                    });
+                });
+            }
+        });
+        
+        return data;
+    }
+
+    /**
+     * Get value from appData
+     */
+    function getData(key, defaultValue = '') {
+        return appData[key] !== undefined ? appData[key] : defaultValue;
+    }
+
+    /**
+     * Set value in appData
+     */
+    function setData(key, value) {
+        appData[key] = value;
+    }
+
+    /**
+     * Debounced save to GitHub
+     */
+    function scheduleSave(commitMessage = 'تحديث البيانات') {
+        if (syncTimer) clearTimeout(syncTimer);
+        
+        syncTimer = setTimeout(() => {
+            saveToGitHub(commitMessage);
+        }, 2000); // Save after 2 seconds of inactivity
+    }
+
+    // ==========================================
+    // UI Helper Functions
+    // ==========================================
+    
+    function showLoading(message) {
+        document.getElementById('loadingText').innerText = message;
+        document.getElementById('loadingScreen').classList.remove('hidden');
+    }
+
+    function hideLoading() {
+        document.getElementById('loadingScreen').classList.add('hidden');
+    }
+
+    function showLoadingError(message) {
+        const loadingScreen = document.getElementById('loadingScreen');
+        loadingScreen.innerHTML = `
+            <div class="loading-error">
+                <h3>❌ حدث خطأ</h3>
+                <p>${message}</p>
+                <button class="btn" style="background: var(--active); margin-top: 15px;" onclick="location.reload()">
+                    إعادة المحاولة 🔄
+                </button>
+                <button class="btn" style="background: var(--warning); margin-top: 10px;" onclick="resetSetup()">
+                    إعادة الإعداد ⚙️
+                </button>
+            </div>
+        `;
+    }
+
+    function showStatus(message, type = 'syncing', duration = 0) {
+        const status = document.getElementById('syncStatus');
+        const icon = document.getElementById('syncIcon');
+        const text = document.getElementById('syncText');
+        
+        const icons = {
+            syncing: '☁️',
+            success: '✅',
+            error: '❌'
+        };
+        
+        icon.innerText = icons[type] || '☁️';
+        text.innerText = message;
+        status.className = `sync-status ${type} show`;
         
         if (duration > 0) {
             setTimeout(() => {
-                toast.classList.remove('show');
+                status.classList.remove('show');
             }, duration);
         }
     }
 
-    // =================================
+    function resetSetup() {
+        localStorage.removeItem('gh_token');
+        localStorage.removeItem('gh_repo');
+        location.reload();
+    }
+
+    // ==========================================
     // User Interface Functions
-    // =================================
+    // ==========================================
     
-    /**
-     * Switch between users (Dahoum/Remy)
-     */
     function switchUser(u) {
         currentUser = u;
+        const c = CONFIG[u];
         
         // Update theme
-        document.getElementById('appBody').className = CONFIG[u].theme;
-        
-        // Update welcome message
-        document.getElementById('uWelcome').innerText = CONFIG[u].welcome;
+        document.getElementById('appBody').className = c.theme;
+        document.getElementById('uWelcome').innerText = c.welcome;
         
         // Update stats
         updateStats();
         
         // Update profile image
-        const savedImg = localStorage.getItem(u + '_img');
-        document.getElementById('uImg').src = savedImg || 'https://via.placeholder.com/150';
+        const savedImg = getData(`${u}_img`, c.placeholder);
+        document.getElementById('uImg').src = savedImg || c.placeholder;
         
         // Render components
         renderBadges();
@@ -900,28 +1352,22 @@
         checkQuizStatus();
     }
 
-    /**
-     * Update user statistics display
-     */
     function updateStats() {
-        const stars = parseInt(localStorage.getItem(currentUser + '_stars') || 0);
-        const pts = parseInt(localStorage.getItem(currentUser + '_pts') || 0);
-        const lvl = Math.floor(pts / 100) + 1;
+        const stars = parseInt(getData(`${currentUser}_stars`, '0'));
+        const points = parseInt(getData(`${currentUser}_points`, '0'));
+        const level = Math.floor(points / 100) + 1;
         
         document.getElementById('uStars').innerText = stars;
-        document.getElementById('uPts').innerText = pts;
-        document.getElementById('uLvl').innerText = lvl;
+        document.getElementById('uPts').innerText = points;
+        document.getElementById('uLvl').innerText = level;
     }
 
-    /**
-     * Render badges based on achievements
-     */
     function renderBadges() {
-        const stars = parseInt(localStorage.getItem(currentUser + '_stars') || 0);
-        const pts = parseInt(localStorage.getItem(currentUser + '_pts') || 0);
-        const quizzes = parseInt(localStorage.getItem(currentUser + '_quizzes') || 0);
+        const stars = parseInt(getData(`${currentUser}_stars`, '0'));
+        const points = parseInt(getData(`${currentUser}_points`, '0'));
+        const quizzes = parseInt(getData(`${currentUser}_quizzes`, '0'));
         
-        const stats = { stars, pts, quizzes };
+        const stats = { stars, points, quizzes };
         
         const html = BADGES.map(badge => {
             const earned = stats[badge.type] >= badge.req;
@@ -935,15 +1381,12 @@
         document.getElementById('badgesArea').innerHTML = html;
     }
 
-    /**
-     * Render Zoom classes
-     */
     function renderZoom() {
         const html = CONFIG[currentUser].zoom.map(z => `
             <div class="zoom-card">
-                <strong>${z.t}</strong><br>
-                <small>📅 ${z.d}</small><br>
-                <small>⏰ ${z.h}</small>
+                <strong>${z.t}</strong>
+                <small style="display: block; margin: 8px 0; color: #666;">📅 ${z.d}</small>
+                <small style="display: block; color: #666;">⏰ ${z.h}</small>
                 <a href="${z.l}" target="_blank" class="zoom-btn">دخول الحصة 🖥️</a>
             </div>
         `).join('');
@@ -951,9 +1394,6 @@
         document.getElementById('zoomArea').innerHTML = html;
     }
 
-    /**
-     * Render school schedule
-     */
     function renderSchool() {
         const html = DAYS.map((d, i) => `
             <tr>
@@ -965,13 +1405,9 @@
         document.getElementById('schoolBody').innerHTML = html;
     }
 
-    /**
-     * Change week and update display
-     */
     function changeWeek(w) {
         currentWeek = w;
         
-        // Update button states
         document.querySelectorAll('.week-btn').forEach((b, i) => {
             b.classList.toggle('active', i + 1 === w);
         });
@@ -979,13 +1415,10 @@
         renderJournal();
     }
 
-    /**
-     * Render weekly journal
-     */
     function renderJournal() {
         const html = DAYS.map(d => {
             const key = `${currentUser}_w${currentWeek}_${d}`;
-            const data = JSON.parse(localStorage.getItem(key) || '{"hw":"","h1":"","h2":"","sad":""}');
+            const data = JSON.parse(getData(key, '{"hw":"","h1":"","h2":"","sad":""}'));
             
             return `
                 <div class="day-card">
@@ -995,30 +1428,26 @@
                         onchange="saveNote('${key}','hw',this.value)" 
                         placeholder="اكتب واجباتك هنا..."
                         aria-label="واجبات يوم ${d}"
-                    >${data.hw}</textarea>
+                    >${data.hw || ''}</textarea>
                     
-                    <div class="happy-box">
-                        <label>😊 أشياء سعيدة:</label>
-                        <textarea 
-                            onchange="saveNote('${key}','h1',this.value)" 
-                            placeholder="حدث سعيد 1"
-                            aria-label="حدث سعيد 1 يوم ${d}"
-                        >${data.h1}</textarea>
-                        <textarea 
-                            onchange="saveNote('${key}','h2',this.value)" 
-                            placeholder="حدث سعيد 2"
-                            aria-label="حدث سعيد 2 يوم ${d}"
-                        >${data.h2}</textarea>
-                    </div>
+                    <label style="color: var(--success);">😊 أشياء سعيدة:</label>
+                    <textarea 
+                        onchange="saveNote('${key}','h1',this.value)" 
+                        placeholder="حدث سعيد 1"
+                        aria-label="حدث سعيد 1 يوم ${d}"
+                    >${data.h1 || ''}</textarea>
+                    <textarea 
+                        onchange="saveNote('${key}','h2',this.value)" 
+                        placeholder="حدث سعيد 2"
+                        aria-label="حدث سعيد 2 يوم ${d}"
+                    >${data.h2 || ''}</textarea>
                     
-                    <div class="sad-box">
-                        <label>😔 شيء أزعجني:</label>
-                        <textarea 
-                            onchange="saveNote('${key}','sad',this.value)" 
-                            placeholder="اكتب ما أزعجك..."
-                            aria-label="شيء محزن يوم ${d}"
-                        >${data.sad}</textarea>
-                    </div>
+                    <label style="color: var(--error);">😔 شيء أزعجني:</label>
+                    <textarea 
+                        onchange="saveNote('${key}','sad',this.value)" 
+                        placeholder="اكتب ما أزعجك..."
+                        aria-label="شيء محزن يوم ${d}"
+                    >${data.sad || ''}</textarea>
                 </div>
             `;
         }).join('');
@@ -1026,47 +1455,34 @@
         document.getElementById('journalArea').innerHTML = html;
     }
 
-    /**
-     * Save journal note with debounced cloud sync
-     */
-    function saveNote(k, f, v) {
-        const data = JSON.parse(localStorage.getItem(k) || '{}');
-        data[f] = v;
-        localStorage.setItem(k, JSON.stringify(data));
+    function saveNote(key, field, value) {
+        const data = JSON.parse(getData(key, '{}'));
+        data[field] = value;
+        setData(key, JSON.stringify(data));
         
-        // Debounced sync
-        if (syncTimer) clearTimeout(syncTimer);
-        syncTimer = setTimeout(() => pushToCloud(), 2000);
+        scheduleSave('تحديث المذكرات');
     }
 
-    // =================================
+    // ==========================================
     // Math Quiz Functions
-    // =================================
+    // ==========================================
     
-    /**
-     * Check if quiz was completed today
-     */
     function checkQuizStatus() {
         const today = new Date().toDateString();
-        const lastQuiz = localStorage.getItem(currentUser + '_lastQuiz');
-        const quizzes = parseInt(localStorage.getItem(currentUser + '_quizzes') || 0);
+        const lastQuiz = getData(`${currentUser}_lastQuiz`, '');
+        const quizzes = parseInt(getData(`${currentUser}_quizzes`, '0'));
         
         if (lastQuiz === today) {
-            // Quiz already completed today
             document.getElementById('quizBox').classList.add('hidden');
             document.getElementById('quizResult').classList.add('hidden');
             document.getElementById('quizDone').classList.remove('hidden');
             document.getElementById('totalQuizzes').innerText = quizzes;
         } else {
-            // Start new quiz
             document.getElementById('quizDone').classList.add('hidden');
             startQuiz();
         }
     }
 
-    /**
-     * Start a new quiz
-     */
     function startQuiz() {
         qIdx = 1;
         currentScore = 0;
@@ -1081,22 +1497,17 @@
         genQ();
     }
 
-    /**
-     * Generate a new question (multiplication or division, 1-10)
-     */
     function genQ() {
         const isDiv = Math.random() > 0.5;
         
         if (isDiv) {
-            // Division: Generate result first, then multiply to get dividend
-            const divisor = Math.floor(Math.random() * 10) + 1; // 1-10
-            const result = Math.floor(Math.random() * 10) + 1;  // 1-10
+            const divisor = Math.floor(Math.random() * 10) + 1;
+            const result = Math.floor(Math.random() * 10) + 1;
             const dividend = result * divisor;
             
             document.getElementById('qDisplay').innerText = `${dividend} ÷ ${divisor}`;
             currentAns = result;
         } else {
-            // Multiplication: 1-10 × 1-10
             const num1 = Math.floor(Math.random() * 10) + 1;
             const num2 = Math.floor(Math.random() * 10) + 1;
             
@@ -1110,9 +1521,6 @@
         document.getElementById('feedback').classList.add('hidden');
     }
 
-    /**
-     * Check user's answer
-     */
     function checkMath() {
         const val = parseInt(document.getElementById('qInput').value);
         const fb = document.getElementById('feedback');
@@ -1128,12 +1536,12 @@
         
         if (val === currentAns) {
             correctAnswers++;
-            currentScore += 20; // 20 points per correct answer
+            currentScore += 20;
             fb.innerText = "🎉 صح! بطل +20 نقطة";
             fb.className = "feedback-box correct";
         } else {
             wrongAnswers++;
-            fb.innerHTML = `❌ خطأ! الإجابة الصحيحة هي: <b>${currentAns}</b>`;
+            fb.innerHTML = `❌ خطأ! الإجابة الصحيحة: <b>${currentAns}</b>`;
             fb.className = "feedback-box wrong";
         }
         
@@ -1149,168 +1557,228 @@
         }, 2000);
     }
 
-    /**
-     * Update quiz counters display
-     */
     function updateQuizCounters() {
         document.getElementById('correctCount').innerText = correctAnswers;
         document.getElementById('wrongCount').innerText = wrongAnswers;
     }
 
-    /**
-     * Finish quiz and save results
-     */
     function finishQuiz() {
-        // Hide quiz box
         document.getElementById('quizBox').classList.add('hidden');
-        
-        // Show results
         document.getElementById('quizResult').classList.remove('hidden');
         document.getElementById('earnedPts').innerText = currentScore;
         document.getElementById('finalScore').innerText = `${correctAnswers}/5`;
         
         // Update points
-        const currentPts = parseInt(localStorage.getItem(currentUser + '_pts') || 0);
-        const newPts = currentPts + currentScore;
-        localStorage.setItem(currentUser + '_pts', newPts);
+        const currentPts = parseInt(getData(`${currentUser}_points`, '0'));
+        setData(`${currentUser}_points`, currentPts + currentScore);
         
         // Update quiz count
-        const currentQuizzes = parseInt(localStorage.getItem(currentUser + '_quizzes') || 0);
-        localStorage.setItem(currentUser + '_quizzes', currentQuizzes + 1);
+        const currentQuizzes = parseInt(getData(`${currentUser}_quizzes`, '0'));
+        setData(`${currentUser}_quizzes`, currentQuizzes + 1);
+        
+        // Update perfects if all correct
+        if (correctAnswers === 5) {
+            const perfects = parseInt(getData(`${currentUser}_perfects`, '0'));
+            setData(`${currentUser}_perfects`, perfects + 1);
+        }
         
         // Save completion date
         const today = new Date().toDateString();
-        localStorage.setItem(currentUser + '_lastQuiz', today);
+        setData(`${currentUser}_lastQuiz`, today);
         
-        // Update display
+        // Update UI
         updateStats();
         renderBadges();
         
-        // Sync to cloud
-        pushToCloud();
+        // Save to GitHub
+        saveToGitHub('إكمال تحدي الرياضيات');
     }
 
-    // =================================
-    // Image Upload Function
-    // =================================
+    // ==========================================
+    // Image Upload
+    // ==========================================
     
-    /**
-     * Upload and validate profile image
-     */
-    function uploadImg(e) {
+    async function uploadImg(e) {
         const file = e.target.files[0];
-        
         if (!file) return;
         
-        // Validate file type
+        // Validate
         if (!file.type.startsWith('image/')) {
-            alert('⚠️ الرجاء اختيار صورة فقط (JPG, PNG, GIF)');
+            alert('⚠️ الرجاء اختيار صورة فقط');
             return;
         }
         
-        // Validate file size (max 5MB)
         if (file.size > 5 * 1024 * 1024) {
-            alert('⚠️ حجم الصورة كبير جداً! الحد الأقصى 5 ميجابايت');
+            alert('⚠️ حجم الصورة كبير جداً! الحد الأقصى 5MB');
             return;
         }
         
-        const reader = new FileReader();
-        
-        reader.onload = (event) => {
-            const img = event.target.result;
-            document.getElementById('uImg').src = img;
-            localStorage.setItem(currentUser + '_img', img);
-            pushToCloud();
-        };
-        
-        reader.onerror = () => {
-            alert('❌ حدث خطأ في قراءة الصورة');
-        };
-        
-        reader.readAsDataURL(file);
-    }
-
-    // =================================
-    // Admin Functions
-    // =================================
-    
-    /**
-     * Open admin modal with password protection
-     */
-    function openAdmin() {
-        // Note: This is a simple protection. For production, use proper authentication
-        const password = prompt("🔐 الرقم السري:");
-        
-        if (password === null) return; // User cancelled
-        
-        if (password === "123456") {
-            document.getElementById('adminModal').classList.add('active');
+        try {
+            showStatus('جاري ضغط الصورة...', 'syncing');
             
-            // Load saved credentials (if any)
-            document.getElementById('ghToken').value = localStorage.getItem('gh_token') || '';
-            document.getElementById('ghRepo').value = localStorage.getItem('gh_repo') || '';
-        } else {
-            alert("❌ رقم سري خاطئ!");
+            // Compress and convert to base64
+            const compressed = await compressImage(file, 600, 0.8);
+            
+            // Update UI
+            document.getElementById('uImg').src = compressed;
+            
+            // Save to data
+            setData(`${currentUser}_img`, compressed);
+            
+            // Save to GitHub
+            await saveToGitHub('تحديث الصورة الشخصية');
+            
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('❌ حدث خطأ في رفع الصورة');
         }
     }
 
     /**
-     * Close admin modal
+     * Compress image before saving
      */
-    function closeAdmin() {
-        document.getElementById('adminModal').classList.remove('active');
+    function compressImage(file, maxWidth, quality) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                const img = new Image();
+                
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxWidth) {
+                            width *= maxWidth / height;
+                            height = maxWidth;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                
+                img.onerror = () => reject(new Error('فشل تحميل الصورة'));
+                img.src = e.target.result;
+            };
+            
+            reader.onerror = () => reject(new Error('فشل قراءة الملف'));
+            reader.readAsDataURL(file);
+        });
     }
 
-    /**
-     * Add reward (star) to user
-     */
-    function addReward(u) {
-        const currentStars = parseInt(localStorage.getItem(u + '_stars') || 0);
-        const newStars = currentStars + 1;
-        
-        localStorage.setItem(u + '_stars', newStars);
-        
-        if (u === currentUser) {
-            updateStats();
-            renderBadges();
-        }
-        
-        pushToCloud();
-        alert(`✅ تمت إضافة نجمة لـ ${u === 'dahoum' ? 'دحوم' : 'ريمي'}!`);
+    // ==========================================
+    // Modal Functions
+    // ==========================================
+    
+    function openSetup() {
+        document.getElementById('setupModal').classList.add('active');
+        document.getElementById('setupToken').value = githubToken;
+        document.getElementById('setupRepo').value = githubRepo;
     }
 
-    /**
-     * Save admin settings and sync
-     */
-    function saveAdmin() {
-        const token = document.getElementById('ghToken').value.trim();
-        const repo = document.getElementById('ghRepo').value.trim();
+    async function saveSetup() {
+        const token = document.getElementById('setupToken').value.trim();
+        const repo = document.getElementById('setupRepo').value.trim();
         
         if (!token || !repo) {
             alert('⚠️ الرجاء إدخال جميع البيانات!');
             return;
         }
         
-        // Validate repo format (should be username/repo)
         if (!repo.includes('/')) {
-            alert('⚠️ صيغة المستودع غير صحيحة! يجب أن تكون: username/repo');
+            alert('⚠️ صيغة المستودع غير صحيحة! مثال: username/repo-name');
+            return;
+        }
+        
+        // Save credentials
+        localStorage.setItem('gh_token', token);
+        localStorage.setItem('gh_repo', repo);
+        githubToken = token;
+        githubRepo = repo;
+        
+        // Close modal and reload
+        document.getElementById('setupModal').classList.remove('active');
+        location.reload();
+    }
+
+    function openAdmin() {
+        const password = prompt("🔐 كلمة المرور:");
+        
+        if (password === null) return;
+        
+        if (password === "123456") {
+            document.getElementById('adminModal').classList.add('active');
+            document.getElementById('adminToken').value = githubToken;
+            document.getElementById('adminRepo').value = githubRepo;
+        } else {
+            alert("❌ كلمة مرور خاطئة!");
+        }
+    }
+
+    function closeAdmin() {
+        document.getElementById('adminModal').classList.remove('active');
+    }
+
+    function addReward(user, type, amount = 1) {
+        const key = type === 'stars' ? `${user}_stars` : `${user}_points`;
+        const current = parseInt(getData(key, '0'));
+        setData(key, current + amount);
+        
+        if (user === currentUser) {
+            updateStats();
+            renderBadges();
+        }
+        
+        const label = type === 'stars' ? 'نجمة' : 'نقطة';
+        const userName = user === 'dahoum' ? 'دحوم' : 'ريمي';
+        
+        saveToGitHub(`إضافة ${amount} ${label} لـ ${userName}`);
+        alert(`✅ تمت إضافة ${amount} ${label} لـ ${userName}!`);
+    }
+
+    async function updateGitHubSettings() {
+        const token = document.getElementById('adminToken').value.trim();
+        const repo = document.getElementById('adminRepo').value.trim();
+        
+        if (!token || !repo) {
+            alert('⚠️ الرجاء إدخال جميع البيانات!');
+            return;
+        }
+        
+        if (!repo.includes('/')) {
+            alert('⚠️ صيغة المستودع غير صحيحة!');
             return;
         }
         
         localStorage.setItem('gh_token', token);
         localStorage.setItem('gh_repo', repo);
+        githubToken = token;
+        githubRepo = repo;
         
-        pushToCloud();
-        closeAdmin();
-        
-        alert('✅ تم حفظ الإعدادات بنجاح!');
+        await saveToGitHub('تحديث إعدادات GitHub');
+        alert('✅ تم تحديث الإعدادات!');
     }
 
-    // Close modal on outside click
+    async function forceSyncNow() {
+        await saveToGitHub('مزامنة يدوية');
+    }
+
+    // Close modals on outside click
     document.getElementById('adminModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeAdmin();
-        }
+        if (e.target === this) closeAdmin();
     });
 </script>
 
